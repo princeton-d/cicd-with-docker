@@ -38,12 +38,10 @@ jobs:
       - name: DockerHub Push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
-      - name: SSH Remote Commands
-        uses: appleboy/ssh-action@master
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
+          ssh-private-key: ${{ secrets.EC2_KEY }}
 
           script: |
             sudo docker kill ${{ secrets.PROJECT_NAME }}
