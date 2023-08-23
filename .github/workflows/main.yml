@@ -38,10 +38,12 @@ jobs:
       - name: DockerHub Push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.3
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@master
         with:
-          ssh-private-key: ${{ secrets.EC2_KEY }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
 
           script: |
             sudo docker kill ${{ secrets.PROJECT_NAME }}
@@ -51,7 +53,4 @@ jobs:
             
             sudo docker run -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
             --name ${{ secrets.PROJECT_NAME }} \
-#            -e SPRING_DATASOURCE_URL=${{ secrets.DB_URL }} \
-#            -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
-#            -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
