@@ -11,15 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check if Docker is installed
-        run: |
-          if ! command -v docker &> /dev/null; then
-            sudo apt-get update
-            sudo apt-get install -y docker.io
-            sudo systemctl start docker
-            sudo systemctl enable docker
-          fi
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -55,6 +46,9 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
 
           script: |
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+
             sudo docker kill ${{ secrets.PROJECT_NAME }}
             sudo docker rm -f ${{ secrets.PROJECT_NAME }}
             sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
